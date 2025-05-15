@@ -44,7 +44,7 @@ A simple Flask-based API for the Breaking Into Tech platform.
 
 Start the Flask development server:
 ```bash
-python api.py
+python3 api.py
 ```
 
 The server will run on `http://127.0.0.1:5000/` (localhost) by default with debug mode enabled.
