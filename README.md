@@ -6,6 +6,7 @@ A simple Flask-based API for the Breaking Into Tech platform.
 
 - **Root Endpoint**: Returns a greeting message and current timestamp
 - **Health Check**: Provides service status information
+- **Signup**: Register a new user
 
 ## Prerequisites
 
@@ -59,11 +60,43 @@ A simple Flask-based API for the Breaking Into Tech platform.
    sudo -u postgres createdb breaking_into_tech
    ```
 
+## Database Migration
+
+To run database migrations (create/update tables):
+
+```bash
+chmod +x migrate.sh
+./migrate.sh
+```
+
 ## Running the Application
 
-Start the Flask development server:
+To start the Flask application as a background service:
+
 ```bash
-python3 api.py
+chmod +x flask_service.sh
+./flask_service.sh start
+```
+
+To stop the service:
+
+```bash
+./flask_service.sh stop
+```
+
+To check the status:
+
+```bash
+./flask_service.sh status
+```
+
+### Managing Logs
+
+The Flask service writes logs to `/tmp/flask_app.log` (or similar, see `flask_service.sh`).
+To view the logs in real time:
+
+```bash
+tail -f /tmp/flask_app.log
 ```
 
 The server will run on `http://127.0.0.1:5000/` (localhost) by default with debug mode enabled.
