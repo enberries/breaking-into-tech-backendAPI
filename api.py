@@ -1,8 +1,10 @@
 from flask import Flask, jsonify, request
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 import os
 from dotenv import load_dotenv
+from database import db
 
 # Load environment variables from .env file
 load_dotenv()
@@ -25,7 +27,10 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{DB_USER}:{encoded_passwo
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize SQLAlchemy
-db = SQLAlchemy(app)
+db.init_app(app)
+from models import User  # Import after db.init_app(app)
+
+migrate = Migrate(app, db)
 
 # Flag to track database availability
 db_available = True
@@ -85,18 +90,5 @@ def health_check():
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     })
 
-
-
-
-
 if __name__ == "__main__":
-    # Create database tables before starting the app if they don't exist
-    try:
-        with app.app_context():
-            db.create_all()
-            print("Database tables created successfully")
-    except Exception as e:
-        print(f"Database initialization failed: {e}")
-        print("Application will run with limited functionality")
-        
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5000)
