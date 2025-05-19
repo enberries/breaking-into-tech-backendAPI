@@ -99,6 +99,41 @@ The server will run on `http://127.0.0.1:5000/` (localhost) by default with debu
   }
   ```
 
+### 3. Signup
+
+- **URL**: `/signup`
+- **Method**: POST
+- **Request Body Example**:
+  ```json
+  {
+    "firstname": "John",
+    "lastname": "Doe",
+    "email": "john@example.com",
+    "password": "yourpassword",
+    "bio": "Optional bio",
+    "profile_picture": "Optional URL"
+  }
+  ```
+- **Success Response Example**:
+  ```json
+  {
+    "message": "User registered successfully",
+    "user_id": 1
+  }
+  ```
+- **Error Response Example** (missing field):
+  ```json
+  {
+    "error": "Missing required field: firstname"
+  }
+  ```
+- **Error Response Example** (duplicate email):
+  ```json
+  {
+    "error": "Email already registered"
+  }
+  ```
+
 ## Development
 
 To extend this API, add new routes in the `api.py` file following the existing pattern.

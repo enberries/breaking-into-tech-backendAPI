@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 import os
 from dotenv import load_dotenv
 from database import db
+from routes import routes
 
 # Load environment variables from .env file
 load_dotenv()
@@ -29,6 +30,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Initialize SQLAlchemy
 db.init_app(app)
 from models import User  # Import after db.init_app(app)
+
+# Register the routes blueprint
+app.register_blueprint(routes)
 
 migrate = Migrate(app, db)
 
