@@ -23,7 +23,7 @@ A simple Flask-based API for the Breaking Into Tech platform.
 
 2. Create a virtual environment (recommended):
    ```bash
-   python -m venv .venv
+   python3 -m venv .venv
    ```
 
 3. Activate the virtual environment:
