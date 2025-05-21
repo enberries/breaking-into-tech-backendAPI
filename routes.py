@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from werkzeug.security import generate_password_hash
 from database import db
-from models import User
+from models import User, Profile  # Import Profile model
 
 routes = Blueprint('routes', __name__)
 
@@ -18,14 +18,23 @@ def signup():
         return jsonify({'error': 'Email already registered'}), 409
 
     hashed_password = generate_password_hash(data['password'])
+
+    # Create User and Profile entries
     user = User(
+        email=data['email'],
+        password_hash=hashed_password
+    )
+    db.session.add(user)
+    db.session.flush()  # Flush to get the user ID for the profile
+
+    profile = Profile(
+        user_id=user.id,
         firstname=data['firstname'],
         lastname=data['lastname'],
-        email=data['email'],
-        password_hash=hashed_password,
         bio=data.get('bio'),
         profile_picture=data.get('profile_picture')
     )
-    db.session.add(user)
+    db.session.add(profile)
     db.session.commit()
+
     return jsonify({'message': 'User registered successfully', 'user_id': user.id}), 201
