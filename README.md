@@ -11,6 +11,7 @@ A simple Flask-based API for the Breaking Into Tech platform.
 
 - Python 3.8+
 - pip (Python package manager)
+- PostgreSQL database
 
 ## Installation
 
@@ -38,6 +39,24 @@ A simple Flask-based API for the Breaking Into Tech platform.
 4. Install dependencies:
    ```bash
    pip install -r requirements.txt
+   ```
+
+5. Configure your database by creating a `.env` file in the project root:
+   ```bash
+   DB_USER=your_postgres_username
+   DB_PASSWORD=your_postgres_password
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_NAME=breaking_into_tech
+   ```
+
+6. Create the PostgreSQL database:
+   ```bash
+   createdb breaking_into_tech
+   ```
+   If you don't have permissions, use:
+   ```bash
+   sudo -u postgres createdb breaking_into_tech
    ```
 
 ## Running the Application
@@ -72,6 +91,10 @@ The server will run on `http://127.0.0.1:5000/` (localhost) by default with debu
   {
     "status": "healthy",
     "service": "breaking-into-tech-backend",
+    "database": {
+      "status": "healthy",
+      "error": null
+    },
     "timestamp": "2025-05-15 14:30:45"
   }
   ```
