@@ -143,3 +143,46 @@ def update_profile():
         return jsonify({"error": "Token has expired"}), 401
     except jwt.InvalidTokenError:
         return jsonify({"error": "Invalid token"}), 401
+
+@routes.route('/change-password', methods=['PUT'])
+def change_password():
+    token = request.headers.get('Authorization')
+
+    if not token:
+        return jsonify({"error": "Token is missing"}), 401
+
+    try:
+        # Decode the JWT token
+        decoded_token = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+        user_id = decoded_token['user_id']
+
+        # Fetch user from the database
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        # Get the updated password data from the request
+        data = request.get_json()
+        old_password = data.get('old_password')
+        new_password = data.get('new_password')
+        confirm_password = data.get('confirm_password')
+
+        if not old_password or not new_password or not confirm_password:
+            return jsonify({"error": "old_password, new_password, and confirm_password are required"}), 400
+
+        if not check_password_hash(user.password_hash, old_password):
+            return jsonify({"error": "Old password is incorrect"}), 400
+
+        if new_password != confirm_password:
+            return jsonify({"error": "Passwords do not match"}), 400
+
+        # Update the user's password
+        user.password_hash = generate_password_hash(new_password)
+        db.session.commit()
+
+        return jsonify({"message": "Password changed successfully"})
+
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token has expired"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Invalid token"}), 401
