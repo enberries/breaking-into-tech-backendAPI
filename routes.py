@@ -67,3 +67,39 @@ def signin():
     }, SECRET_KEY, algorithm='HS256')
 
     return jsonify({"message": "Login successful", "token": token})
+
+@routes.route('/profile', methods=['GET'])
+def get_profile():
+    token = request.headers.get('Authorization')
+
+    if not token:
+        return jsonify({"error": "Token is missing"}), 401
+
+    try:
+        # Decode the JWT token
+        decoded_token = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+        user_id = decoded_token['user_id']
+
+        # Fetch user and profile details from the database
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        profile = Profile.query.filter_by(user_id=user_id).first()
+        if not profile:
+            return jsonify({"error": "Profile not found"}), 404
+
+        # Return user profile details
+        return jsonify({
+            "email": user.email,
+            "firstname": profile.firstname,
+            "lastname": profile.lastname,
+            "bio": profile.bio,
+            "profile_picture": profile.profile_picture,
+            "entity": user.entity
+        })
+
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token has expired"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Invalid token"}), 401

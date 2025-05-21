@@ -224,6 +224,55 @@ The server will run on `http://127.0.0.1:5000/` (localhost) by default with debu
   }
   ```
 
+### 5. Get Profile
+
+- **URL**: `/profile`
+- **Method**: GET
+
+- **Headers**:
+  - `Authorization`: Bearer `<your_jwt_token>`
+
+- **Explanation**:
+  - Retrieves the user's profile details using the JWT token provided in the `Authorization` header.
+  - The token is decoded to fetch the user ID, and the corresponding user and profile details are retrieved from the database.
+
+- **Success Response Example**:
+
+  ```json
+  {
+      "email": "john@example.com",
+      "firstname": "John",
+      "lastname": "Doe",
+      "bio": "Optional bio",
+      "profile_picture": "Optional URL",
+      "entity": "project_name_or_organization"
+  }
+  ```
+
+- **Error Response Example** (missing token):
+
+  ```json
+  {
+      "error": "Token is missing"
+  }
+  ```
+
+- **Error Response Example** (invalid token):
+
+  ```json
+  {
+      "error": "Invalid token"
+  }
+  ```
+
+- **Error Response Example** (user not found):
+
+  ```json
+  {
+      "error": "User not found"
+  }
+  ```
+
 ## Development
 
 To extend this API, add new routes in the `api.py` file following the existing pattern.
