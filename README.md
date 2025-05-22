@@ -328,6 +328,61 @@ The server will run on `http://127.0.0.1:5000/` (localhost) by default with debu
   }
   ```
 
+### 7. Change Password
+
+- **URL**: `/change-password`
+- **Method**: PUT
+
+- **Headers**:
+  - `Authorization`: Bearer `<your_jwt_token>`
+
+- **Request Body Example**:
+
+  ```json
+  {
+      "old_password": "current_password",
+      "new_password": "new_secure_password",
+      "confirm_password": "new_secure_password"
+  }
+  ```
+
+- **Explanation**:
+  - Allows the user to change their password by providing the current password (`old_password`) and confirming the new password.
+  - The `old_password` is validated against the current password stored in the database.
+  - The `new_password` and `confirm_password` must match.
+
+- **Success Response Example**:
+
+  ```json
+  {
+      "message": "Password changed successfully"
+  }
+  ```
+
+- **Error Response Example** (missing fields):
+
+  ```json
+  {
+      "error": "old_password, new_password, and confirm_password are required"
+  }
+  ```
+
+- **Error Response Example** (incorrect old password):
+
+  ```json
+  {
+      "error": "Old password is incorrect"
+  }
+  ```
+
+- **Error Response Example** (passwords do not match):
+
+  ```json
+  {
+      "error": "Passwords do not match"
+  }
+  ```
+
 ## Development
 
 To extend this API, add new routes in the `api.py` file following the existing pattern.
