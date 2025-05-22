@@ -224,6 +224,110 @@ The server will run on `http://127.0.0.1:5000/` (localhost) by default with debu
   }
   ```
 
+### 5. Get Profile
+
+- **URL**: `/profile`
+- **Method**: GET
+
+- **Headers**:
+  - `Authorization`: Bearer `<your_jwt_token>`
+
+- **Explanation**:
+  - Retrieves the user's profile details using the JWT token provided in the `Authorization` header.
+  - The token is decoded to fetch the user ID, and the corresponding user and profile details are retrieved from the database.
+
+- **Success Response Example**:
+
+  ```json
+  {
+      "email": "john@example.com",
+      "firstname": "John",
+      "lastname": "Doe",
+      "bio": "Optional bio",
+      "profile_picture": "Optional URL",
+      "entity": "project_name_or_organization"
+  }
+  ```
+
+- **Error Response Example** (missing token):
+
+  ```json
+  {
+      "error": "Token is missing"
+  }
+  ```
+
+- **Error Response Example** (invalid token):
+
+  ```json
+  {
+      "error": "Invalid token"
+  }
+  ```
+
+- **Error Response Example** (user not found):
+
+  ```json
+  {
+      "error": "User not found"
+  }
+  ```
+
+### 6. Update Profile
+
+- **URL**: `/profile`
+- **Method**: PUT
+
+- **Headers**:
+  - `Authorization`: Bearer `<your_jwt_token>`
+
+- **Request Body Example**:
+
+  ```json
+  {
+      "firstname": "UpdatedFirstName",
+      "lastname": "UpdatedLastName",
+      "bio": "Updated bio information.",
+      "profile_picture": "https://example.com/updated-profile.jpg"
+  }
+  ```
+
+- **Explanation**:
+  - Updates the user's profile details using the JWT token provided in the `Authorization` header.
+  - The token is decoded to fetch the user ID, and the corresponding profile fields are updated in the database.
+
+- **Success Response Example**:
+
+  ```json
+  {
+      "message": "Profile updated successfully"
+  }
+  ```
+
+- **Error Response Example** (missing token):
+
+  ```json
+  {
+      "error": "Token is missing"
+  }
+  ```
+
+- **Error Response Example** (invalid token):
+
+  ```json
+  {
+      "error": "Invalid token"
+  }
+  ```
+
+- **Error Response Example** (user not found):
+
+  ```json
+  {
+      "error": "User not found"
+  }
+  ```
+
 ## Development
 
 To extend this API, add new routes in the `api.py` file following the existing pattern.
