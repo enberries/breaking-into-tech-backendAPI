@@ -132,38 +132,52 @@ The server will run on `http://127.0.0.1:5000/` (localhost) by default with debu
   }
   ```
 
-### 3. Signup
+### Updated Signup API
 
 - **URL**: `/signup`
 - **Method**: POST
+
 - **Request Body Example**:
+
   ```json
   {
-    "firstname": "John",
-    "lastname": "Doe",
-    "email": "john@example.com",
-    "password": "yourpassword",
-    "bio": "Optional bio",
-    "profile_picture": "Optional URL"
+      "firstname": "John",
+      "lastname": "Doe",
+      "email": "john@example.com",
+      "password": "yourpassword",
+      "bio": "Optional bio",
+      "profile_picture": "Optional URL",
+      "entity": "project_name_or_organization"
   }
   ```
+
+- **Explanation**:
+  - The `entity` field is used to associate the user with a specific project or organization, enabling multi-project support.
+  - Authentication data (`email`, `password`) is stored in the `User` table.
+  - Profile details (`firstname`, `lastname`, `bio`, `profile_picture`) are stored in the `Profile` table.
+
 - **Success Response Example**:
+
   ```json
   {
-    "message": "User registered successfully",
-    "user_id": 1
+      "message": "User registered successfully",
+      "user_id": 1
   }
   ```
+
 - **Error Response Example** (missing field):
+
   ```json
   {
-    "error": "Missing required field: firstname"
+      "error": "Missing required field: firstname"
   }
   ```
+
 - **Error Response Example** (duplicate email):
+
   ```json
   {
-    "error": "Email already registered"
+      "error": "Email already registered"
   }
   ```
 
