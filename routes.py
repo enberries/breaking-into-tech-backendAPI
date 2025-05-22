@@ -4,6 +4,7 @@ from database import db
 from models import User, Profile  # Import Profile model
 import jwt
 import datetime
+import os  # Add this import to access environment variables
 
 # Secret key for JWT encoding/decoding
 SECRET_KEY = "your_secret_key"
@@ -181,6 +182,69 @@ def change_password():
         db.session.commit()
 
         return jsonify({"message": "Password changed successfully"})
+
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token has expired"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Invalid token"}), 401
+
+@routes.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    data = request.get_json()
+    email = data.get('email')
+
+    if not email:
+        return jsonify({"error": "Email is required"}), 400
+
+    # Check if user exists
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({"error": "User with this email does not exist"}), 404
+
+    # Generate a reset token
+    reset_token = jwt.encode({
+        'user_id': user.id,
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=int(os.getenv('RESET_TOKEN_EXPIRATION_MINUTES', 5)))  # Default to 5 minutes if not set
+    }, SECRET_KEY, algorithm='HS256')
+
+    # Store the token in the database for one-time use
+    user.reset_token = reset_token
+    db.session.commit()
+
+    return jsonify({
+        "message": "Password token generated successfully",
+        "token": reset_token
+    })
+
+@routes.route('/reset-password', methods=['POST'])
+def reset_password():
+    data = request.get_json()
+    token = data.get('token')
+    new_password = data.get('new_password')
+    confirm_password = data.get('confirm_password')
+
+    if not token or not new_password or not confirm_password:
+        return jsonify({"error": "Token, new_password, and confirm_password are required"}), 400
+
+    if new_password != confirm_password:
+        return jsonify({"error": "Passwords do not match"}), 400
+
+    try:
+        # Decode the reset token
+        decoded_token = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+        user_id = decoded_token['user_id']
+
+        # Fetch user from the database
+        user = User.query.get(user_id)
+        if not user or user.reset_token != token:
+            return jsonify({"error": "Invalid or already used token"}), 401
+
+        # Update the user's password
+        user.password_hash = generate_password_hash(new_password)
+        user.reset_token = None  # Invalidate the token after use
+        db.session.commit()
+
+        return jsonify({"message": "Password reset successfully"})
 
     except jwt.ExpiredSignatureError:
         return jsonify({"error": "Token has expired"}), 401
