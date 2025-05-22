@@ -31,7 +31,6 @@ def signup():
         password_hash=hashed_password,
         entity=data['entity']
     )
-    print(user)
     db.session.add(user)
     db.session.flush()  # Flush to get the user ID for the profile
 
@@ -71,10 +70,14 @@ def signin():
 
 @routes.route('/profile', methods=['GET'])
 def get_profile():
-    token = request.headers.get('Authorization')
+    auth_header = request.headers.get('Authorization')
+    
+    print(auth_header)
 
-    if not token:
-        return jsonify({"error": "Token is missing"}), 401
+    if not auth_header or not auth_header.startswith('Bearer '):
+        return jsonify({"error": "Bearer token is missing or invalid"}), 401
+
+    token = auth_header.split(' ')[1]  # Extract the token part
 
     try:
         # Decode the JWT token
@@ -107,10 +110,12 @@ def get_profile():
 
 @routes.route('/profile', methods=['PUT'])
 def update_profile():
-    token = request.headers.get('Authorization')
+    auth_header = request.headers.get('Authorization')
 
-    if not token:
-        return jsonify({"error": "Token is missing"}), 401
+    if not auth_header or not auth_header.startswith('Bearer '):
+        return jsonify({"error": "Bearer token is missing or invalid"}), 401
+
+    token = auth_header.split(' ')[1]  # Extract the token part
 
     try:
         # Decode the JWT token
@@ -147,10 +152,12 @@ def update_profile():
 
 @routes.route('/change-password', methods=['PUT'])
 def change_password():
-    token = request.headers.get('Authorization')
+    auth_header = request.headers.get('Authorization')
 
-    if not token:
-        return jsonify({"error": "Token is missing"}), 401
+    if not auth_header or not auth_header.startswith('Bearer '):
+        return jsonify({"error": "Bearer token is missing or invalid"}), 401
+
+    token = auth_header.split(' ')[1]  # Extract the token part
 
     try:
         # Decode the JWT token
