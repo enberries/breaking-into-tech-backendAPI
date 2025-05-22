@@ -181,6 +181,49 @@ The server will run on `http://127.0.0.1:5000/` (localhost) by default with debu
   }
   ```
 
+### 4. Signin
+
+- **URL**: `/signin`
+- **Method**: POST
+
+- **Request Body Example**:
+
+  ```json
+  {
+      "email": "john@example.com",
+      "password": "yourpassword"
+  }
+  ```
+
+- **Explanation**:
+  - Authenticates the user by validating the email and password.
+  - Returns a JWT token upon successful authentication.
+
+- **Success Response Example**:
+
+  ```json
+  {
+      "message": "Login successful",
+      "token": "<jwt_token>"
+  }
+  ```
+
+- **Error Response Example** (invalid credentials):
+
+  ```json
+  {
+      "error": "Invalid email or password"
+  }
+  ```
+
+- **Error Response Example** (missing fields):
+
+  ```json
+  {
+      "error": "Email and password are required"
+  }
+  ```
+
 ## Development
 
 To extend this API, add new routes in the `api.py` file following the existing pattern.
